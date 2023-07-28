@@ -1,0 +1,93 @@
+import numpy as np
+
+import actions
+import environment
+import q_table
+
+def monte_carlo(sim_input, sim_output) -> (np.array, list):
+    """
+    Monte Carlo: full-trajectory RL algorithm to train agent
+    """
+    num_episodes = sim_input.num_episodes
+    gamma = sim_input.gamma
+    alpha = sim_input.alpha
+    epsilon = sim_input.epsilon
+
+    q_table = q_table.init_q_table()
+    steps_cache = np.zeros(num_episodes)
+    rewards_cache = np.zeros(num_episodes)
+
+    # Iterate over episodes
+    for episode in range(num_episodes):
+
+        # Set to target policy at final episode
+        if episode == len(range(num_episodes)) - 1:
+            epsilon = 0
+
+        # Initialize environment and agent position
+        agent_pos, env, cliff_pos, goal_pos, game_over = environment.init_env()
+
+        state_trajectory = []
+        action_trajectory = []
+        reward_trajectory = []
+
+        while not game_over:
+
+            # Initialize state at start of new episode
+            if steps_cache[episode] == 0:
+                # Get state corresponding to agent position
+                state = environment.get_state(agent_pos)
+
+                # Select action using ε-greedy policy
+                action = actions.epsilon_greedy_action(state, q_table, epsilon)
+
+            # Retrieve state
+            state = environment.get_state(agent_pos)
+
+            # Move agent to next position
+            agent_pos = actions.move_agent(agent_pos, action)
+
+            # Mark visited path
+            env = environment.mark_path(agent_pos, env)
+
+            # Determine next state
+            next_state = environment.get_state(agent_pos)
+
+            # Compute and store reward
+            reward = actions.get_reward(next_state, cliff_pos, goal_pos)
+            rewards_cache[episode] += reward
+
+            state_trajectory.append(state)
+            action_trajectory.append(action)
+            reward_trajectory.append(reward)
+
+            # Check whether game is over
+            game_over = environment.check_game_over(episode,
+                next_state, cliff_pos, goal_pos, steps_cache[episode]
+            )
+
+            # Select next action using ε-greedy policy
+            next_action = actions.epsilon_greedy_action(next_state, q_table, epsilon)
+
+            # Update state and action
+            action = next_action
+
+            steps_cache[episode] += 1
+
+        # At end of episode, update Q-table for full trajectory
+        for t in range(len(reward_trajectory)-1, 0, -1):
+
+            reward = reward_trajectory[t]
+            action = action_trajectory[t]
+            state = state_trajectory[t]
+
+            cum_reward = actions.compute_cum_rewards(gamma, t, reward_trajectory) + reward
+            q_table[action, state] += alpha * (cum_reward - q_table[action, state])
+
+    sim_output.step_cache.append(steps_cache)
+    sim_output.reward_cache.append(rewards_cache)
+
+    sim_output.env_cache.append(env)  # array of np arrays
+    sim_output.name_cache.append("Monte Carlo")
+
+    return q_table, sim_output
