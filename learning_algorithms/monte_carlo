@@ -47,13 +47,14 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
 
         while not game_over:
             # Initialize state at start of new episode
+            state = environment.get_state(agent_pos)
             if steps_cache[episode] == 0:
                 # Get state corresponding to agent position
-                state = environment.get_state(agent_pos)
+                #state = environment.get_state(agent_pos)
                 # Select action using ε-greedy policy
                 action = actions.epsilon_greedy_action(state, q_table, epsilon)
             # Retrieve state
-            state = environment.get_state(agent_pos)
+            #state = environment.get_state(agent_pos)
             # Move agent to next position
             agent_pos = actions.move_agent(agent_pos, action)
             # Mark visited path
