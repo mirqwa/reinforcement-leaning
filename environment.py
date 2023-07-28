@@ -27,10 +27,14 @@ def check_game_over(
 
 
 def init_env() -> (tuple, np.array, np.array, int, bool):
-    """Initialize environment and agent position"""
+    """
+    Initialize environment and agent position
+    All the positions have zero values except the starting position of the agent
+    which is marked with 1 to show that it has been visited
+    """
     agent_pos = (3, 0)  # Left-bottom corner (start)
     env = np.zeros((4, 12), dtype=int)
-    env = mark_path(agent_pos, env)
+    env = mark_path(agent_pos, env) # Marking the current position of the agent
     cliff_states = np.arange(37, 47)  # States for cliff tiles
     goal_state = 47  # State for right-bottom corner (destination)
     game_over = False
