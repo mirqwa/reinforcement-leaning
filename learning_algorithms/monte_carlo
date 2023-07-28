@@ -2,7 +2,8 @@ import numpy as np
 
 import actions
 import environment
-import q_table
+import utils
+
 
 def monte_carlo(sim_input, sim_output) -> (np.array, list):
     """
