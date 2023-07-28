@@ -7,6 +7,18 @@ import qtable
 import utils
 
 
+def update_q_table(
+    reward_trajectory, action_trajectory, state_trajectory, gamma, q_table, alpha
+):
+    for t in range(len(reward_trajectory) - 1, 0, -1):
+        reward = reward_trajectory[t]
+        action = action_trajectory[t]
+        state = state_trajectory[t]
+
+        cum_reward = actions.compute_cum_rewards(gamma, t, reward_trajectory) + reward
+        q_table[action, state] += alpha * (cum_reward - q_table[action, state])
+
+
 def monte_carlo(sim_input, sim_output) -> (np.array, list):
     """
     Monte Carlo: full-trajectory RL algorithm to train agent
@@ -22,7 +34,6 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
 
     # Iterate over episodes
     for episode in range(num_episodes):
-
         # Set to target policy at final episode
         if episode == len(range(num_episodes)) - 1:
             epsilon = 0
@@ -35,7 +46,6 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
         reward_trajectory = []
 
         while not game_over:
-
             # Initialize state at start of new episode
             if steps_cache[episode] == 0:
                 # Get state corresponding to agent position
@@ -65,8 +75,8 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
             reward_trajectory.append(reward)
 
             # Check whether game is over
-            game_over = environment.check_game_over(episode,
-                next_state, cliff_pos, goal_pos, steps_cache[episode]
+            game_over = environment.check_game_over(
+                episode, next_state, cliff_pos, goal_pos, steps_cache[episode]
             )
 
             # Select next action using ε-greedy policy
@@ -78,14 +88,14 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
             steps_cache[episode] += 1
 
         # At end of episode, update Q-table for full trajectory
-        for t in range(len(reward_trajectory)-1, 0, -1):
-
-            reward = reward_trajectory[t]
-            action = action_trajectory[t]
-            state = state_trajectory[t]
-
-            cum_reward = actions.compute_cum_rewards(gamma, t, reward_trajectory) + reward
-            q_table[action, state] += alpha * (cum_reward - q_table[action, state])
+        update_q_table(
+            reward_trajectory,
+            action_trajectory,
+            state_trajectory,
+            gamma,
+            q_table,
+            alpha,
+        )
 
     sim_output.step_cache.append(steps_cache)
     sim_output.reward_cache.append(rewards_cache)
