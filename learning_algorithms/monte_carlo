@@ -2,6 +2,8 @@ import numpy as np
 
 import actions
 import environment
+import plot
+import qtable
 import utils
 
 
@@ -14,7 +16,7 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
     alpha = sim_input.alpha
     epsilon = sim_input.epsilon
 
-    q_table = q_table.init_q_table()
+    q_table = qtable.init_q_table()
     steps_cache = np.zeros(num_episodes)
     rewards_cache = np.zeros(num_episodes)
 
@@ -92,3 +94,21 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
     sim_output.name_cache.append("Monte Carlo")
 
     return q_table, sim_output
+
+
+if __name__ == "__main__":
+    sim_input = utils.sim_init(num_episodes=10000, gamma=0.8, alpha=0.01, epsilon=0.1)
+    sim_output = utils.sim_output(
+        rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
+    )
+    q_table_mc, sim_output = monte_carlo(sim_input, sim_output)
+    # Print console output
+    plot.console_output(
+        sim_output,
+        sim_input.num_episodes,
+    )
+
+    # Plot output
+    plot.plot_steps(sim_output)
+    plot.plot_rewards(sim_output)
+    plot.plot_path(sim_output)
