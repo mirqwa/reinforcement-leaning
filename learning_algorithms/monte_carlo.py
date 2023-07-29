@@ -18,6 +18,26 @@ def update_q_table(
         q_table[action, state] += alpha * (cum_reward - q_table[action, state])
 
 
+def compute_and_store_reward(
+    episode,
+    state,
+    next_state,
+    action,
+    cliff_pos,
+    goal_pos,
+    rewards_cache,
+    state_trajectory,
+    action_trajectory,
+    reward_trajectory,
+):
+    # Compute and store reward
+    reward = actions.get_reward(next_state, cliff_pos, goal_pos)
+    rewards_cache[episode] += reward
+    state_trajectory.append(state)
+    action_trajectory.append(action)
+    reward_trajectory.append(reward)
+
+
 def monte_carlo(sim_input, sim_output) -> (np.array, list):
     """
     Monte Carlo: full-trajectory RL algorithm to train agent
@@ -52,15 +72,22 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
                 action = actions.epsilon_greedy_action(state, q_table, epsilon)
             # Move agent to next position
             agent_pos = actions.move_agent(agent_pos, action)
+            # updating the environmet after taking the action in the current state
             env, next_state, game_over = environment.update_environment(
                 env, episode, agent_pos, cliff_pos, goal_pos, steps_cache
             )
-            # Compute and store reward
-            reward = actions.get_reward(next_state, cliff_pos, goal_pos)
-            rewards_cache[episode] += reward
-            state_trajectory.append(state)
-            action_trajectory.append(action)
-            reward_trajectory.append(reward)
+            compute_and_store_reward(
+                episode,
+                state,
+                next_state,
+                action,
+                cliff_pos,
+                goal_pos,
+                rewards_cache,
+                state_trajectory,
+                action_trajectory,
+                reward_trajectory,
+            )
             # Set the action to be the next action using ε-greedy policy
             action = actions.epsilon_greedy_action(next_state, q_table, epsilon)
             steps_cache[episode] += 1
