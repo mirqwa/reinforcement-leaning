@@ -1,3 +1,5 @@
+import argparse
+
 import numpy as np
 
 import actions
@@ -125,8 +127,8 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
     return q_table, sim_output
 
 
-def main():
-    sim_input = utils.sim_init(num_episodes=10000, gamma=0.8, alpha=0.01, epsilon=0.1)
+def main(num_episodes, gamma, alpha, epsilon):
+    sim_input = utils.sim_init(num_episodes=num_episodes, gamma=gamma, alpha=alpha, epsilon=epsilon)
     sim_output = utils.sim_output(
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
@@ -135,4 +137,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    args = argparse.ArgumentParser()
+    args.add_argument("--num_episodes", default=10000, type=int)
+    args.add_argument("--gamma", default=0.8, type=float)
+    args.add_argument("--alpha", default=0.01, type=float)
+    args.add_argument("--epsilon", default=0.1, type=float)
+    args = args.parse_args()
+    main(args.num_episodes, args.gamma, args.alpha, args.epsilon)
