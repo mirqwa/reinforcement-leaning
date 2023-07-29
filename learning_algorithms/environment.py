@@ -34,7 +34,7 @@ def init_env() -> (tuple, np.array, np.array, int, bool):
     """
     agent_pos = (3, 0)  # Left-bottom corner (start)
     env = np.zeros((4, 12), dtype=int)
-    env = mark_path(agent_pos, env) # Marking the current position of the agent
+    env = mark_path(agent_pos, env)  # Marking the current position of the agent
     cliff_states = np.arange(37, 47)  # States for cliff tiles
     goal_state = 47  # State for right-bottom corner (destination)
     game_over = False
@@ -102,3 +102,15 @@ def get_position(state: int) -> tuple:
     agent_pos = (pos_x, pos_y)
 
     return agent_pos
+
+
+def update_environment(env, episode, agent_pos, cliff_pos, goal_pos, steps_cache):
+    # Mark visited path
+    env = mark_path(agent_pos, env)
+    # Determine next state
+    next_state = get_state(agent_pos)
+    # Check whether game is over
+    game_over = check_game_over(
+        episode, next_state, cliff_pos, goal_pos, steps_cache[episode]
+    )
+    return env, next_state, game_over
