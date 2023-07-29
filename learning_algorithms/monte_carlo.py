@@ -38,11 +38,22 @@ def compute_and_store_reward(
     reward_trajectory.append(reward)
 
 
-def update_simulation_output(env, steps_cache, rewards_cache):
+def update_simulation_output(env, steps_cache, rewards_cache, sim_output):
     sim_output.step_cache.append(steps_cache)
     sim_output.reward_cache.append(rewards_cache)
     sim_output.env_cache.append(env)
     sim_output.name_cache.append("Monte Carlo")
+
+
+def plot_simulation_results(sim_input, sim_output):
+    plot.console_output(
+        sim_output,
+        sim_input.num_episodes,
+    )
+    # Plot output
+    plot.plot_steps(sim_output)
+    plot.plot_rewards(sim_output)
+    plot.plot_path(sim_output)
 
 
 def monte_carlo(sim_input, sim_output) -> (np.array, list):
@@ -109,24 +120,19 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
             alpha,
         )
 
-    update_simulation_output(env, steps_cache, rewards_cache)
+    update_simulation_output(env, steps_cache, rewards_cache, sim_output)
 
     return q_table, sim_output
 
 
-if __name__ == "__main__":
+def main():
     sim_input = utils.sim_init(num_episodes=10000, gamma=0.8, alpha=0.01, epsilon=0.1)
     sim_output = utils.sim_output(
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
     q_table_mc, sim_output = monte_carlo(sim_input, sim_output)
-    # Print console output
-    plot.console_output(
-        sim_output,
-        sim_input.num_episodes,
-    )
+    plot_simulation_results(sim_input, sim_output)
 
-    # Plot output
-    plot.plot_steps(sim_output)
-    plot.plot_rewards(sim_output)
-    plot.plot_path(sim_output)
+
+if __name__ == "__main__":
+    main()
