@@ -38,6 +38,13 @@ def compute_and_store_reward(
     reward_trajectory.append(reward)
 
 
+def update_simulation_output(env, steps_cache, rewards_cache):
+    sim_output.step_cache.append(steps_cache)
+    sim_output.reward_cache.append(rewards_cache)
+    sim_output.env_cache.append(env)
+    sim_output.name_cache.append("Monte Carlo")
+
+
 def monte_carlo(sim_input, sim_output) -> (np.array, list):
     """
     Monte Carlo: full-trajectory RL algorithm to train agent
@@ -102,11 +109,7 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
             alpha,
         )
 
-    sim_output.step_cache.append(steps_cache)
-    sim_output.reward_cache.append(rewards_cache)
-
-    sim_output.env_cache.append(env)  # array of np arrays
-    sim_output.name_cache.append("Monte Carlo")
+    update_simulation_output(env, steps_cache, rewards_cache)
 
     return q_table, sim_output
 
