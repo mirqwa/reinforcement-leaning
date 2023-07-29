@@ -72,7 +72,6 @@ def get_reward(state: int, cliff_pos: np.array, goal_pos: int) -> int:
 def compute_cum_rewards(gamma: float, t: int, rewards: np.array) -> float:
     """Cumulative reward function"""
     cum_reward = 0
-   # cum_reward = rewards[-1] #TEST!!!
     for tau in range(t, len(rewards)):
         cum_reward += gamma ** (tau - t) * rewards[tau]
     return cum_reward

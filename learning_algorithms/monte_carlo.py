@@ -14,7 +14,6 @@ def update_q_table(
         reward = reward_trajectory[t]
         action = action_trajectory[t]
         state = state_trajectory[t]
-
         cum_reward = actions.compute_cum_rewards(gamma, t, reward_trajectory) + reward
         q_table[action, state] += alpha * (cum_reward - q_table[action, state])
 
@@ -49,32 +48,21 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
             # Initialize state at start of new episode
             state = environment.get_state(agent_pos)
             if steps_cache[episode] == 0:
-                # Get state corresponding to agent position
-                #state = environment.get_state(agent_pos)
                 # Select action using ε-greedy policy
                 action = actions.epsilon_greedy_action(state, q_table, epsilon)
-            # Retrieve state
-            #state = environment.get_state(agent_pos)
             # Move agent to next position
             agent_pos = actions.move_agent(agent_pos, action)
-            # Mark visited path
-            env = environment.mark_path(agent_pos, env)
-            # Determine next state
-            next_state = environment.get_state(agent_pos)
+            env, next_state, game_over = environment.update_environment(
+                env, episode, agent_pos, cliff_pos, goal_pos, steps_cache
+            )
             # Compute and store reward
             reward = actions.get_reward(next_state, cliff_pos, goal_pos)
             rewards_cache[episode] += reward
             state_trajectory.append(state)
             action_trajectory.append(action)
             reward_trajectory.append(reward)
-            # Check whether game is over
-            game_over = environment.check_game_over(
-                episode, next_state, cliff_pos, goal_pos, steps_cache[episode]
-            )
-            # Select next action using ε-greedy policy
-            next_action = actions.epsilon_greedy_action(next_state, q_table, epsilon)
-            # Update state and action
-            action = next_action
+            # Set the action to be the next action using ε-greedy policy
+            action = actions.epsilon_greedy_action(next_state, q_table, epsilon)
             steps_cache[episode] += 1
 
         # At end of episode, update Q-table for full trajectory
