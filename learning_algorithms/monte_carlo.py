@@ -73,7 +73,7 @@ def plot_simulation_results(sim_input, sim_output):
     plot.plot_path(sim_output)
 
 
-def monte_carlo(sim_input, sim_output, first_visit=True) -> (np.array, list):
+def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
     """
     Monte Carlo: full-trajectory RL algorithm to train agent
     """
@@ -143,12 +143,12 @@ def monte_carlo(sim_input, sim_output, first_visit=True) -> (np.array, list):
     return q_table, sim_output
 
 
-def main(num_episodes, gamma, alpha, epsilon):
+def main(num_episodes, gamma, alpha, epsilon, first_visit):
     sim_input = utils.sim_init(num_episodes=num_episodes, gamma=gamma, alpha=alpha, epsilon=epsilon)
     sim_output = utils.sim_output(
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
-    q_table_mc, sim_output = monte_carlo(sim_input, sim_output)
+    q_table_mc, sim_output = monte_carlo(sim_input, sim_output, first_visit)
     plot_simulation_results(sim_input, sim_output)
 
 
@@ -158,5 +158,6 @@ if __name__ == "__main__":
     args.add_argument("--gamma", default=0.8, type=float)
     args.add_argument("--alpha", default=0.01, type=float)
     args.add_argument("--epsilon", default=0.1, type=float)
+    args.add_argument("--first_visit", action="store_true")
     args = args.parse_args()
-    main(args.num_episodes, args.gamma, args.alpha, args.epsilon)
+    main(args.num_episodes, args.gamma, args.alpha, args.epsilon, args.first_visit)
