@@ -1,3 +1,6 @@
+import plot
+
+
 class sim_init:
     def __init__(self, num_episodes, gamma, alpha, epsilon):
         self.num_episodes = num_episodes  # Number of training episodes
@@ -16,3 +19,14 @@ class sim_output:
         self.step_cache = step_cache  # list of steps
         self.env_cache = env_cache  # list of final paths
         self.name_cache = name_cache  # list of algorithm names
+
+
+def plot_simulation_results(sim_input, sim_output):
+    plot.console_output(
+        sim_output,
+        sim_input.num_episodes,
+    )
+    # Plot output
+    plot.plot_steps(sim_output)
+    plot.plot_rewards(sim_output)
+    plot.plot_path(sim_output)
