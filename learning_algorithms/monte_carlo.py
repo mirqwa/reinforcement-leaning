@@ -149,6 +149,7 @@ def main(num_episodes, gamma, alpha, epsilon, first_visit):
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
     q_table_mc, sim_output = monte_carlo(sim_input, sim_output, first_visit)
+    np.savetxt("output/mc_q_table.csv", q_table_mc, delimiter=",")
     plot_simulation_results(sim_input, sim_output)
 
 

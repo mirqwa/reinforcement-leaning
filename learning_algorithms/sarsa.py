@@ -105,6 +105,7 @@ def main(num_episodes, gamma, alpha, epsilon):
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
     q_table_sarsa, sim_output = sarsa(sim_input, sim_output)
+    np.savetxt("output/sarsa_q_table.csv", q_table_sarsa, delimiter=",")
     plot_simulation_results(sim_input, sim_output)
 
 
