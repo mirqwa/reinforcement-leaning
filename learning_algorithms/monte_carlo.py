@@ -79,7 +79,7 @@ def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
         if episode == len(range(num_episodes)) - 1:
             epsilon = 0
 
-        # Initialize environment and agent position
+        # Initialize environment and agent position for a new episode
         agent_pos, env, cliff_pos, goal_pos, game_over = environment.init_env()
 
         state_trajectory = []
