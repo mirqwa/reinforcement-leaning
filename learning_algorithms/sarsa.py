@@ -3,7 +3,7 @@ import sys
 
 import numpy as np
 
-sys.path.append(os.path.abspath('../reinforcement-leaning'))
+sys.path.append(os.path.abspath("../reinforcement-leaning"))
 
 import actions
 import environment
@@ -26,7 +26,6 @@ def sarsa(sim_input, sim_output) -> (np.array, list):
 
     # Iterate over episodes
     for episode in range(num_episodes):
-
         # Set to target policy at final episode
         if episode == len(range(num_episodes)) - 1:
             epsilon = 0
@@ -35,7 +34,6 @@ def sarsa(sim_input, sim_output) -> (np.array, list):
         agent_pos, env, cliff_pos, goal_pos, game_over = environment.init_env()
 
         while not game_over:
-
             if steps_cache[episode] == 0:
                 # Get state corresponding to agent position
                 state = environment.get_state(agent_pos)
@@ -57,8 +55,8 @@ def sarsa(sim_input, sim_output) -> (np.array, list):
             rewards_cache[episode] += reward
 
             # Check whether game is over
-            game_over = environment.check_game_over(episode,
-                next_state, cliff_pos, goal_pos, steps_cache[episode]
+            game_over = environment.check_game_over(
+                episode, next_state, cliff_pos, goal_pos, steps_cache[episode]
             )
 
             # Select next action using ε-greedy policy
@@ -88,7 +86,9 @@ def sarsa(sim_input, sim_output) -> (np.array, list):
 
 
 def main(num_episodes, gamma, alpha, epsilon):
-    sim_input = utils.sim_init(num_episodes=num_episodes, gamma=gamma, alpha=alpha, epsilon=epsilon)
+    sim_input = utils.sim_init(
+        num_episodes=num_episodes, gamma=gamma, alpha=alpha, epsilon=epsilon
+    )
     sim_output = utils.sim_output(
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
