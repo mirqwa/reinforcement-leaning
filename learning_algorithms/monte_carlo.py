@@ -13,13 +13,24 @@ import qtable
 import utils
 
 
+def state_action_exists_earlier(earlier_state_trajectory, earlier_action_trajectory, state, action):
+    states = np.array(earlier_state_trajectory)
+    actions = np.array(earlier_action_trajectory)
+    state_indices = list(np.where(states == state)[0])
+    action_indices = list(np.where(actions == action)[0])
+    common_indices = list(set(state_indices).intersection(action_indices))
+    return common_indices
+
+
 def update_q_table(
-    reward_trajectory, action_trajectory, state_trajectory, gamma, q_table, alpha
+    reward_trajectory, action_trajectory, state_trajectory, gamma, q_table, alpha, first_visit
 ):
     for t in range(len(reward_trajectory) - 1, 0, -1):
         reward = reward_trajectory[t]
         action = action_trajectory[t]
         state = state_trajectory[t]
+        if first_visit and state_action_exists_earlier(state_trajectory[0:t], action_trajectory[0:t], state, action):
+            continue
         cum_reward = actions.compute_cum_rewards(gamma, t, reward_trajectory) + reward
         q_table[action, state] += alpha * (cum_reward - q_table[action, state])
 
@@ -62,7 +73,7 @@ def plot_simulation_results(sim_input, sim_output):
     plot.plot_path(sim_output)
 
 
-def monte_carlo(sim_input, sim_output) -> (np.array, list):
+def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
     """
     Monte Carlo: full-trajectory RL algorithm to train agent
     """
@@ -124,6 +135,7 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
             gamma,
             q_table,
             alpha,
+            first_visit
         )
 
     update_simulation_output(env, steps_cache, rewards_cache, sim_output)
@@ -131,12 +143,12 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
     return q_table, sim_output
 
 
-def main(num_episodes, gamma, alpha, epsilon):
+def main(num_episodes, gamma, alpha, epsilon, first_visit):
     sim_input = utils.sim_init(num_episodes=num_episodes, gamma=gamma, alpha=alpha, epsilon=epsilon)
     sim_output = utils.sim_output(
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
-    q_table_mc, sim_output = monte_carlo(sim_input, sim_output)
+    q_table_mc, sim_output = monte_carlo(sim_input, sim_output, first_visit)
     plot_simulation_results(sim_input, sim_output)
 
 
@@ -146,5 +158,6 @@ if __name__ == "__main__":
     args.add_argument("--gamma", default=0.8, type=float)
     args.add_argument("--alpha", default=0.01, type=float)
     args.add_argument("--epsilon", default=0.1, type=float)
+    args.add_argument("--first_visit", action="store_true")
     args = args.parse_args()
-    main(args.num_episodes, args.gamma, args.alpha, args.epsilon)
+    main(args.num_episodes, args.gamma, args.alpha, args.epsilon, args.first_visit)
