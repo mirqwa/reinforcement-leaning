@@ -1,3 +1,5 @@
+import argparse
+
 import plot
 
 
@@ -30,3 +32,12 @@ def plot_simulation_results(sim_input, sim_output):
     plot.plot_steps(sim_output)
     plot.plot_rewards(sim_output)
     plot.plot_path(sim_output)
+
+
+def get_argument_parser():
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("--num_episodes", default=10000, type=int)
+    arg_parser.add_argument("--gamma", default=0.8, type=float)
+    arg_parser.add_argument("--alpha", default=0.01, type=float)
+    arg_parser.add_argument("--epsilon", default=0.1, type=float)
+    return arg_parser

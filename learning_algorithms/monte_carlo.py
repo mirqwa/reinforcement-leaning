@@ -1,4 +1,3 @@
-import argparse
 import os
 import sys
 
@@ -142,11 +141,7 @@ def main(num_episodes, gamma, alpha, epsilon, first_visit):
 
 
 if __name__ == "__main__":
-    args = argparse.ArgumentParser()
-    args.add_argument("--num_episodes", default=10000, type=int)
-    args.add_argument("--gamma", default=0.8, type=float)
-    args.add_argument("--alpha", default=0.01, type=float)
-    args.add_argument("--epsilon", default=0.1, type=float)
-    args.add_argument("--first_visit", action="store_true")
-    args = args.parse_args()
+    arg_parser = utils.get_argument_parser()
+    arg_parser.add_argument("--first_visit", action="store_true")
+    args = arg_parser.parse_args()
     main(args.num_episodes, args.gamma, args.alpha, args.epsilon, args.first_visit)
