@@ -13,13 +13,24 @@ import qtable
 import utils
 
 
+def state_action_exists_earlier(earlier_state_trajectory, earlier_action_trajectory, state, action):
+    states = np.array(earlier_state_trajectory)
+    actions = np.array(earlier_action_trajectory)
+    state_indices = list(np.where(states == state)[0])
+    action_indices = list(np.where(actions == action)[0])
+    common_indices = list(set(state_indices).intersection(action_indices))
+    return common_indices
+
+
 def update_q_table(
-    reward_trajectory, action_trajectory, state_trajectory, gamma, q_table, alpha
+    reward_trajectory, action_trajectory, state_trajectory, gamma, q_table, alpha, first_visit
 ):
     for t in range(len(reward_trajectory) - 1, 0, -1):
         reward = reward_trajectory[t]
         action = action_trajectory[t]
         state = state_trajectory[t]
+        if first_visit and state_action_exists_earlier(state_trajectory[0:t], action_trajectory[0:t], state, action):
+            continue
         cum_reward = actions.compute_cum_rewards(gamma, t, reward_trajectory) + reward
         q_table[action, state] += alpha * (cum_reward - q_table[action, state])
 
@@ -62,7 +73,7 @@ def plot_simulation_results(sim_input, sim_output):
     plot.plot_path(sim_output)
 
 
-def monte_carlo(sim_input, sim_output) -> (np.array, list):
+def monte_carlo(sim_input, sim_output, first_visit=True) -> (np.array, list):
     """
     Monte Carlo: full-trajectory RL algorithm to train agent
     """
@@ -124,6 +135,7 @@ def monte_carlo(sim_input, sim_output) -> (np.array, list):
             gamma,
             q_table,
             alpha,
+            first_visit
         )
 
     update_simulation_output(env, steps_cache, rewards_cache, sim_output)
