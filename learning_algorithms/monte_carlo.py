@@ -1,4 +1,3 @@
-import argparse
 import os
 import sys
 
@@ -8,7 +7,6 @@ sys.path.append(os.path.abspath('../reinforcement-leaning'))
 
 import actions
 import environment
-import plot
 import qtable
 import utils
 
@@ -62,17 +60,6 @@ def update_simulation_output(env, steps_cache, rewards_cache, sim_output):
     sim_output.name_cache.append("Monte Carlo")
 
 
-def plot_simulation_results(sim_input, sim_output):
-    plot.console_output(
-        sim_output,
-        sim_input.num_episodes,
-    )
-    # Plot output
-    plot.plot_steps(sim_output)
-    plot.plot_rewards(sim_output)
-    plot.plot_path(sim_output)
-
-
 def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
     """
     Monte Carlo: full-trajectory RL algorithm to train agent
@@ -92,7 +79,7 @@ def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
         if episode == len(range(num_episodes)) - 1:
             epsilon = 0
 
-        # Initialize environment and agent position
+        # Initialize environment and agent position for a new episode
         agent_pos, env, cliff_pos, goal_pos, game_over = environment.init_env()
 
         state_trajectory = []
@@ -149,15 +136,12 @@ def main(num_episodes, gamma, alpha, epsilon, first_visit):
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
     q_table_mc, sim_output = monte_carlo(sim_input, sim_output, first_visit)
-    plot_simulation_results(sim_input, sim_output)
+    np.savetxt("output/mc_q_table.csv", q_table_mc, delimiter=",")
+    utils.plot_simulation_results(sim_input, sim_output)
 
 
 if __name__ == "__main__":
-    args = argparse.ArgumentParser()
-    args.add_argument("--num_episodes", default=10000, type=int)
-    args.add_argument("--gamma", default=0.8, type=float)
-    args.add_argument("--alpha", default=0.01, type=float)
-    args.add_argument("--epsilon", default=0.1, type=float)
-    args.add_argument("--first_visit", action="store_true")
-    args = args.parse_args()
+    arg_parser = utils.get_argument_parser()
+    arg_parser.add_argument("--first_visit", action="store_true")
+    args = arg_parser.parse_args()
     main(args.num_episodes, args.gamma, args.alpha, args.epsilon, args.first_visit)

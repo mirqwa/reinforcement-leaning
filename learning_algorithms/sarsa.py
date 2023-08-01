@@ -1,14 +1,12 @@
-import argparse
 import os
 import sys
 
 import numpy as np
 
-sys.path.append(os.path.abspath('../reinforcement-leaning'))
+sys.path.append(os.path.abspath("../reinforcement-leaning"))
 
 import actions
 import environment
-import plot
 import qtable
 import utils
 
@@ -28,7 +26,6 @@ def sarsa(sim_input, sim_output) -> (np.array, list):
 
     # Iterate over episodes
     for episode in range(num_episodes):
-
         # Set to target policy at final episode
         if episode == len(range(num_episodes)) - 1:
             epsilon = 0
@@ -37,7 +34,6 @@ def sarsa(sim_input, sim_output) -> (np.array, list):
         agent_pos, env, cliff_pos, goal_pos, game_over = environment.init_env()
 
         while not game_over:
-
             if steps_cache[episode] == 0:
                 # Get state corresponding to agent position
                 state = environment.get_state(agent_pos)
@@ -59,8 +55,8 @@ def sarsa(sim_input, sim_output) -> (np.array, list):
             rewards_cache[episode] += reward
 
             # Check whether game is over
-            game_over = environment.check_game_over(episode,
-                next_state, cliff_pos, goal_pos, steps_cache[episode]
+            game_over = environment.check_game_over(
+                episode, next_state, cliff_pos, goal_pos, steps_cache[episode]
             )
 
             # Select next action using ε-greedy policy
@@ -89,30 +85,19 @@ def sarsa(sim_input, sim_output) -> (np.array, list):
     return q_table, sim_output
 
 
-def plot_simulation_results(sim_input, sim_output):
-    plot.console_output(
-        sim_output,
-        sim_input.num_episodes,
-    )
-    # Plot output
-    plot.plot_steps(sim_output)
-    plot.plot_rewards(sim_output)
-    plot.plot_path(sim_output)
-
 def main(num_episodes, gamma, alpha, epsilon):
-    sim_input = utils.sim_init(num_episodes=num_episodes, gamma=gamma, alpha=alpha, epsilon=epsilon)
+    sim_input = utils.sim_init(
+        num_episodes=num_episodes, gamma=gamma, alpha=alpha, epsilon=epsilon
+    )
     sim_output = utils.sim_output(
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
     q_table_sarsa, sim_output = sarsa(sim_input, sim_output)
-    plot_simulation_results(sim_input, sim_output)
+    np.savetxt("output/sarsa_q_table.csv", q_table_sarsa, delimiter=",")
+    utils.plot_simulation_results(sim_input, sim_output)
 
 
 if __name__ == "__main__":
-    args = argparse.ArgumentParser()
-    args.add_argument("--num_episodes", default=10000, type=int)
-    args.add_argument("--gamma", default=0.8, type=float)
-    args.add_argument("--alpha", default=0.01, type=float)
-    args.add_argument("--epsilon", default=0.1, type=float)
-    args = args.parse_args()
+    arg_parser = utils.get_argument_parser()
+    args = arg_parser.parse_args()
     main(args.num_episodes, args.gamma, args.alpha, args.epsilon)
