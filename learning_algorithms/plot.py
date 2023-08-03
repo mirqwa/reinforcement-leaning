@@ -13,8 +13,8 @@ def plot_rewards(
     """
     sns.set_theme(style="darkgrid")
     # Set x-axis label
-    positions = np.arange(0, len(sim_output.reward_cache[0]) / 10, 100)
-    labels = np.arange(0, len(sim_output.reward_cache[0]), 1000)
+    positions = np.arange(0, len(sim_output.reward_cache[0]) / 10, 10)
+    labels = np.arange(0, len(sim_output.reward_cache[0]), 100)
 
     for i in range(len(sim_output.step_cache)):
         mod = len(sim_output.reward_cache[i]) % 10
@@ -41,8 +41,8 @@ def plot_steps(
     Visualize number of steps taken
     """
 
-    positions = np.arange(0, len(sim_output.step_cache[0]) / 10, 100)
-    labels = np.arange(0, len(sim_output.step_cache[0]), 1000)
+    positions = np.arange(0, len(sim_output.step_cache[0]) / 10, 10)
+    labels = np.arange(0, len(sim_output.step_cache[0]), 100)
 
     sns.set_theme(style="darkgrid")
 
