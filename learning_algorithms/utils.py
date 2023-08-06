@@ -11,8 +11,16 @@ class sim_init:
         self.epsilon = epsilon  # Exploration rate ε
 
     def __str__(self):
-        return "# episodes: " + str(self.num_episodes) + "gamma: " + str(self.gamma) \
-                + "alpha: " + str(self.alpha) + "epsilon: " + str(self.epsilon)
+        return (
+            "# episodes: "
+            + str(self.num_episodes)
+            + "gamma: "
+            + str(self.gamma)
+            + "alpha: "
+            + str(self.alpha)
+            + "epsilon: "
+            + str(self.epsilon)
+        )
 
 
 class sim_output:
@@ -29,8 +37,8 @@ def plot_simulation_results(sim_input, sim_output):
         sim_input.num_episodes,
     )
     # Plot output
-    plot.plot_steps(sim_output)
-    plot.plot_rewards(sim_output)
+    plot.plot_data(sim_output.step_cache, sim_output.name_cache)
+    plot.plot_data(sim_output.reward_cache, sim_output.name_cache)
     plot.plot_path(sim_output)
 
 

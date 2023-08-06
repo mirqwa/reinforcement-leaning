@@ -13,51 +13,17 @@ def get_plot_positions_and_labels(steps_cache):
     return positions, labels, batch_to_be_averaged
 
 
-def plot_rewards(sim_output) -> None:
-    """
-    Visualizes rewards
-    """
-    sns.set_theme(style="darkgrid")
-    # Set x-axis label
-    positions, labels, batch_to_be_averaged = get_plot_positions_and_labels(
-        sim_output.step_cache[0]
-    )
-
-    for i in range(len(sim_output.step_cache)):
-        mod = len(sim_output.reward_cache[i]) % batch_to_be_averaged
-        mean_reward = np.mean(
-            sim_output.reward_cache[i][mod:].reshape(-1, batch_to_be_averaged), axis=1
-        )
-        sns.lineplot(data=mean_reward, label=sim_output.name_cache[i])
-
-    # Plot graph
-    plt.xticks(positions, labels)
-    plt.ylabel("rewards")
-    plt.xlabel("# episodes")
-    plt.legend(loc="best")
-
-    plt.show()
-
-    return
-
-
-def plot_steps(
-    sim_output,
-) -> None:
-    """
-    Visualize number of steps taken
-    """
+def plot_data(data_cache, data_cache_names):
     sns.set_theme(style="darkgrid")
     positions, labels, batch_to_be_averaged = get_plot_positions_and_labels(
-        sim_output.step_cache[0]
+        data_cache[0]
     )
-
-    for i in range(len(sim_output.step_cache)):
-        mod = len(sim_output.step_cache[i]) % batch_to_be_averaged
+    for i in range(len(data_cache)):
+        mod = len(data_cache[i]) % batch_to_be_averaged
         mean_step = np.mean(
-            sim_output.step_cache[i][mod:].reshape(-1, batch_to_be_averaged), axis=1
+            data_cache[i][mod:].reshape(-1, batch_to_be_averaged), axis=1
         )
-        sns.lineplot(data=mean_step, label=sim_output.name_cache[i])
+        sns.lineplot(data=mean_step, label=data_cache_names[i])
 
     # Plot graph
     plt.xticks(positions, labels)
