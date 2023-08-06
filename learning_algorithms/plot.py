@@ -5,21 +5,28 @@ import seaborn as sns
 from environment import env_to_text
 
 
-def plot_rewards(
-    sim_output
-) -> None:
+def get_plot_positions_and_labels(steps_cache):
+    step_size = int(len(steps_cache) / 10)
+    positions = np.arange(0, 100, 10)
+    labels = np.arange(0, len(steps_cache), step_size)
+    batch_to_be_averaged = int(len(steps_cache) / 100)
+    return positions, labels, batch_to_be_averaged
+
+
+def plot_rewards(sim_output) -> None:
     """
     Visualizes rewards
     """
     sns.set_theme(style="darkgrid")
     # Set x-axis label
-    positions = np.arange(0, len(sim_output.reward_cache[0]) / 10, 10)
-    labels = np.arange(0, len(sim_output.reward_cache[0]), 100)
+    positions, labels, batch_to_be_averaged = get_plot_positions_and_labels(
+        sim_output.step_cache[0]
+    )
 
     for i in range(len(sim_output.step_cache)):
-        mod = len(sim_output.reward_cache[i]) % 10
-        mean_reward= np.mean(
-            sim_output.reward_cache[i][mod:].reshape(-1, 10), axis=1
+        mod = len(sim_output.reward_cache[i]) % batch_to_be_averaged
+        mean_reward = np.mean(
+            sim_output.reward_cache[i][mod:].reshape(-1, batch_to_be_averaged), axis=1
         )
         sns.lineplot(data=mean_reward, label=sim_output.name_cache[i])
 
@@ -40,15 +47,16 @@ def plot_steps(
     """
     Visualize number of steps taken
     """
-
-    positions = np.arange(0, len(sim_output.step_cache[0]) / 10, 10)
-    labels = np.arange(0, len(sim_output.step_cache[0]), 100)
-
     sns.set_theme(style="darkgrid")
+    positions, labels, batch_to_be_averaged = get_plot_positions_and_labels(
+        sim_output.step_cache[0]
+    )
 
     for i in range(len(sim_output.step_cache)):
-        mod = len(sim_output.step_cache[i]) % 10
-        mean_step = np.mean(sim_output.step_cache[i][mod:].reshape(-1, 10), axis=1)
+        mod = len(sim_output.step_cache[i]) % batch_to_be_averaged
+        mean_step = np.mean(
+            sim_output.step_cache[i][mod:].reshape(-1, batch_to_be_averaged), axis=1
+        )
         sns.lineplot(data=mean_step, label=sim_output.name_cache[i])
 
     # Plot graph
@@ -57,8 +65,6 @@ def plot_steps(
     plt.xlabel("# episodes")
     plt.legend(loc="best")
     plt.show()
-
-    return
 
 
 def console_output(
@@ -69,13 +75,13 @@ def console_output(
     for i in range(len(sim_output.env_cache)):
         env_str = env_to_text(sim_output.env_cache[i])
 
-        print('=====',sim_output.name_cache[i],'=====')
+        print("=====", sim_output.name_cache[i], "=====")
         print("Action after {} iterations:".format(num_episodes), "\n")
         print(env_str, "\n")
-        print("Number of steps:", int(sim_output.step_cache[i][-1]), "(best = 13)", "\n")
+        print(
+            "Number of steps:", int(sim_output.step_cache[i][-1]), "(best = 13)", "\n"
+        )
         print("Reward:", int(sim_output.reward_cache[i][-1]), "(best = -2)", "\n")
-
-    return
 
 
 def plot_path(
@@ -86,12 +92,14 @@ def plot_path(
     # Set values for cliff
     for i in range(len(sim_output.env_cache)):
         for j in range(1, 11):
-            sim_output.env_cache[i][3,j] = -1
+            sim_output.env_cache[i][3, j] = -1
 
         ax = sns.heatmap(
-            sim_output.env_cache[i], square=True, cbar=True, xticklabels=False, yticklabels=False
+            sim_output.env_cache[i],
+            square=True,
+            cbar=True,
+            xticklabels=False,
+            yticklabels=False,
         )
         ax.set_title(sim_output.name_cache[i])
         plt.show()
-
-    return None
