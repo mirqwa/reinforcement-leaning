@@ -130,18 +130,20 @@ def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
     return q_table, sim_output
 
 
-def main(num_episodes, gamma, alpha, epsilon, first_visit):
+def main(num_episodes, gamma, alpha, epsilon, first_visit, plot_simulation=False):
     sim_input = utils.sim_init(num_episodes=num_episodes, gamma=gamma, alpha=alpha, epsilon=epsilon)
     sim_output = utils.sim_output(
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
     q_table_mc, sim_output = monte_carlo(sim_input, sim_output, first_visit)
     np.savetxt("output/mc_q_table.csv", q_table_mc, delimiter=",")
-    utils.plot_simulation_results(sim_input, sim_output)
+    if plot_simulation:
+        utils.plot_simulation_results(sim_input, sim_output)
+    return sim_output
 
 
 if __name__ == "__main__":
     arg_parser = utils.get_argument_parser()
     arg_parser.add_argument("--first_visit", action="store_true")
     args = arg_parser.parse_args()
-    main(args.num_episodes, args.gamma, args.alpha, args.epsilon, args.first_visit)
+    main(args.num_episodes, args.gamma, args.alpha, args.epsilon, args.first_visit, plot_simulation=True)
