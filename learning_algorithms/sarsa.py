@@ -85,7 +85,7 @@ def sarsa(sim_input, sim_output) -> (np.array, list):
     return q_table, sim_output
 
 
-def main(num_episodes, gamma, alpha, epsilon):
+def main(num_episodes, gamma, alpha, epsilon, plot_simulation=False):
     sim_input = utils.sim_init(
         num_episodes=num_episodes, gamma=gamma, alpha=alpha, epsilon=epsilon
     )
@@ -94,10 +94,12 @@ def main(num_episodes, gamma, alpha, epsilon):
     )
     q_table_sarsa, sim_output = sarsa(sim_input, sim_output)
     np.savetxt("output/sarsa_q_table.csv", q_table_sarsa, delimiter=",")
-    utils.plot_simulation_results(sim_input, sim_output)
+    if plot_simulation:
+        utils.plot_simulation_results(sim_input, sim_output)
+    return sim_output
 
 
 if __name__ == "__main__":
     arg_parser = utils.get_argument_parser()
     args = arg_parser.parse_args()
-    main(args.num_episodes, args.gamma, args.alpha, args.epsilon)
+    main(args.num_episodes, args.gamma, args.alpha, args.epsilon, plot_simulation=True)
