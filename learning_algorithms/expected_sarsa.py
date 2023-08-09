@@ -11,7 +11,7 @@ import qtable
 import utils
 
 
-def sarsa(sim_input, sim_output) -> (np.array, list):
+def expected_sarsa(sim_input, sim_output) -> (np.array, list):
     """
     SARSA: on-policy RL algorithm to train agent
     """
@@ -92,7 +92,7 @@ def main(num_episodes, gamma, alpha, epsilon, plot_simulation=False):
     sim_output = utils.sim_output(
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
-    q_table_sarsa, sim_output = sarsa(sim_input, sim_output)
+    q_table_sarsa, sim_output = expected_sarsa(sim_input, sim_output)
     np.savetxt("output/sarsa_q_table.csv", q_table_sarsa, delimiter=",")
     if plot_simulation:
         utils.plot_simulation_results(sim_input, sim_output)
