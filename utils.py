@@ -1,5 +1,7 @@
 import argparse
 
+import actions
+import environment
 import plot
 
 
@@ -49,3 +51,15 @@ def get_argument_parser():
     arg_parser.add_argument("--alpha", default=0.1, type=float)
     arg_parser.add_argument("--epsilon", default=0.1, type=float)
     return arg_parser
+
+
+def take_action(env, agent_pos, cliff_pos, goal_pos, action):
+    # Move agent to next position
+    agent_pos = actions.move_agent(agent_pos, action)
+    # Mark visited path
+    env = environment.mark_path(agent_pos, env)
+    # Determine next state
+    next_state = environment.get_state(agent_pos)
+    # Compute and store reward
+    reward = actions.get_reward(next_state, cliff_pos, goal_pos)
+    return agent_pos, env, next_state, reward
