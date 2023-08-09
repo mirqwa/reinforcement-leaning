@@ -41,17 +41,9 @@ def sarsa(sim_input, sim_output) -> (np.array, list):
             # Select action using ε-greedy policy
             action = actions.epsilon_greedy_action(state, q_table, epsilon)
 
-            # Move agent to next position
-            agent_pos = actions.move_agent(agent_pos, action)
-
-            # Mark visited path
-            env = environment.mark_path(agent_pos, env)
-
-            # Determine next state
-            next_state = environment.get_state(agent_pos)
-
-            # Compute and store reward
-            reward = actions.get_reward(next_state, cliff_pos, goal_pos)
+            agent_pos, env, next_state, reward = utils.take_action(
+                env, agent_pos, cliff_pos, goal_pos, action
+            )
             rewards_cache[episode] += reward
 
             # Check whether game is over
