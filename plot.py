@@ -13,7 +13,7 @@ def get_plot_positions_and_labels(steps_cache):
     return positions, labels, batch_to_be_averaged
 
 
-def plot_data(data_cache, data_cache_names):
+def plot_data(data_cache, data_cache_names, y_label):
     sns.set_theme(style="darkgrid")
     positions, labels, batch_to_be_averaged = get_plot_positions_and_labels(
         data_cache[0]
@@ -27,7 +27,7 @@ def plot_data(data_cache, data_cache_names):
 
     # Plot graph
     plt.xticks(positions, labels)
-    plt.ylabel("# steps")
+    plt.ylabel(y_label)
     plt.xlabel("# episodes")
     plt.legend(loc="best")
     plt.show()
