@@ -5,10 +5,10 @@ import plot
 
 class sim_init:
     def __init__(self, num_episodes, gamma, alpha, epsilon):
-        self.num_episodes = num_episodes  # Number of training episodes
-        self.gamma = gamma  # Discount rate γ 0.9
-        self.alpha = alpha  # Learning rate α 0.001
-        self.epsilon = epsilon  # Exploration rate ε
+        self.num_episodes = num_episodes
+        self.gamma = gamma
+        self.alpha = alpha
+        self.epsilon = epsilon
 
     def __str__(self):
         return (
@@ -37,8 +37,8 @@ def plot_simulation_results(sim_input, sim_output):
         sim_input.num_episodes,
     )
     # Plot output
-    plot.plot_data(sim_output.step_cache, sim_output.name_cache)
-    plot.plot_data(sim_output.reward_cache, sim_output.name_cache)
+    plot.plot_data(sim_output.step_cache, sim_output.name_cache, "# steps")
+    plot.plot_data(sim_output.reward_cache, sim_output.name_cache, "rewards")
     plot.plot_path(sim_output)
 
 
