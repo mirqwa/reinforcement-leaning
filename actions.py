@@ -18,7 +18,6 @@ def move_agent(agent_pos: tuple, action: int) -> tuple:
     """
     # Retrieve agent position
     (pos_x, pos_y) = agent_pos
-
     if action == 0:  # Up
         pos_x = pos_x - 1 if pos_x > 0 else pos_x
     elif action == 1:  # Down
@@ -29,10 +28,8 @@ def move_agent(agent_pos: tuple, action: int) -> tuple:
         pos_y = pos_y + 1 if pos_y < 11 else pos_y
     else:  # Infeasible move
         raise Exception("Infeasible move")
+    return pos_x, pos_y
 
-    agent_pos = (pos_x, pos_y)
-
-    return agent_pos
 
 def get_max_qvalue(state: int, q_table: np.array) -> float:
     """Retrieve best Q-value for state from table"""
@@ -44,13 +41,7 @@ def get_reward(state: int, cliff_pos: np.array, goal_pos: int) -> int:
     """
     Compute reward for given state
     """
-    reward = -1
-
-    # Reward of -100 for falling down cliff
-    if state in cliff_pos:
-        reward = -100
-
-    return reward
+    return -100 if state in cliff_pos else -1
 
 def compute_cum_rewards(gamma: float, t: int, rewards: np.array) -> float:
     """Cumulative reward function"""
