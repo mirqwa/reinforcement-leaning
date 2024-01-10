@@ -83,7 +83,7 @@ def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
     steps_cache = np.zeros(num_episodes)
     rewards_cache = np.zeros(num_episodes)
 
-    # Iterate over episodes
+    # Generate the episodes
     for episode in range(num_episodes):
         # Set to target policy at final episode
         if episode == len(range(num_episodes)) - 1:

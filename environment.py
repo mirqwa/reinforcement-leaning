@@ -42,14 +42,13 @@ def init_env() -> (tuple, np.array, np.array, int, bool):
     return agent_pos, env, cliff_states, goal_state, game_over
 
 
-def mark_path(agent: tuple, env: np.array) -> np.array:
+def mark_path(agent_pos: tuple, env: np.array) -> np.array:
     """
-    Store path taken by agent
+    Store path taken by agent_pos
     Only needed for visualization
     """
-    (posY, posX) = agent
+    (posY, posX) = agent_pos
     env[posY][posX] += 1
-
     return env
 
 
@@ -59,7 +58,6 @@ def env_to_text(env: np.array) -> str:
     Needed for visualization in console
     """
     env = np.where(env >= 1, 1, env)
-
     env = np.array2string(env, precision=0, separator=" ", suppress_small=False)
     env = env.replace("[[", " |")
     env = env.replace("]]", "|")
@@ -86,7 +84,6 @@ def get_state(agent_pos: tuple) -> int:
     x_dim = 12
     (pos_x, pos_y) = agent_pos
     state = x_dim * pos_x + pos_y
-
     return state
 
 
@@ -95,12 +92,9 @@ def get_position(state: int) -> tuple:
     Obtain agent position corresponding to state
     """
     x_dim = 12
-
     pos_x = int(np.floor(state / x_dim))
     pos_y = state % x_dim
-
     agent_pos = (pos_x, pos_y)
-
     return agent_pos
 
 

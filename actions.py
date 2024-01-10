@@ -6,21 +6,10 @@ def epsilon_greedy_action(state: int, q_table: np.array, epsilon: float) -> int:
     Select action based on the ε-greedy policy
     Random action with prob. ε, greedy action with prob. 1-ε
     """
-
-    # Random uniform sample from [0,1]
-    sample = np.random.random()
-
-    # Set to 'explore' if sample <= ε
-    explore = True if sample <= epsilon else False
-
-    if explore:  # Explore
-        # Select random action
-        action = np.random.choice(4)
-    else:  # Exploit:
-        # Select action with largest Q-value
-        action = np.argmax(q_table[:, state])
-
-    return action
+    # explore of random value <= ε
+    if np.random.random() <= epsilon:  # Explore
+        return np.random.choice(4)
+    return np.argmax(q_table[:, state])
 
 
 def move_agent(agent_pos: tuple, action: int) -> tuple:
