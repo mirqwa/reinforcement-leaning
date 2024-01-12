@@ -96,12 +96,9 @@ def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
         action_trajectory = []
         reward_trajectory = []
 
+        state = environment.get_state(agent_pos)
         while not game_over:
-            # Initialize state at start of new episode
-            state = environment.get_state(agent_pos)
-            if steps_cache[episode] == 0:
-                # Select action using ε-greedy policy
-                action = actions.epsilon_greedy_action(state, q_table, epsilon)
+            action = actions.epsilon_greedy_action(state, q_table, epsilon)
             # Move agent to next position
             agent_pos = actions.move_agent(agent_pos, action)
             # updating the environmet after taking the action in the current state
@@ -120,8 +117,7 @@ def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
                 action_trajectory,
                 reward_trajectory,
             )
-            # Set the action to be the next action using ε-greedy policy
-            action = actions.epsilon_greedy_action(next_state, q_table, epsilon)
+            state = next_state
             steps_cache[episode] += 1
 
         # At end of episode, update Q-table for full trajectory
