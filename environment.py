@@ -65,7 +65,6 @@ def env_to_text(env: np.array) -> str:
     env = env.replace("]", "|")
     env = env.replace("1", "x")
     env = env.replace("0", " ")
-
     return env
 
 
