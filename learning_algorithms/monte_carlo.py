@@ -2,6 +2,7 @@ import os
 import sys
 
 import numpy as np
+import pandas as pd
 
 sys.path.append(os.path.abspath("../reinforcement-leaning"))
 
@@ -88,7 +89,6 @@ def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
         # Set to target policy at final episode
         if episode == len(range(num_episodes)) - 1:
             epsilon = 0
-
         # Initialize environment and agent position for a new episode
         agent_pos, env, cliff_pos, goal_pos, game_over = environment.init_env()
 
@@ -144,7 +144,13 @@ def main(num_episodes, gamma, alpha, epsilon, first_visit, plot_simulation=False
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
     q_table_mc, sim_output = monte_carlo(sim_input, sim_output, first_visit)
-    np.savetxt("output/mc_q_table.csv", q_table_mc, delimiter=",")
+    q_table_df = pd.DataFrame(
+        columns=["up", "down", "left", "right"], data=q_table_mc.T
+    )
+    q_table_df.index = [
+        environment.get_position(state) for state in range(q_table_df.shape[0])
+    ]
+    q_table_df.to_csv("output/mc_q_table.csv")
     if plot_simulation:
         utils.plot_simulation_results(sim_input, sim_output)
     return sim_output
