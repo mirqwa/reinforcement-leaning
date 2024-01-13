@@ -37,11 +37,12 @@ def get_max_qvalue(state: int, q_table: np.array) -> float:
     return maximum_state_value
 
 
-def get_reward(state: int, cliff_pos: np.array, goal_pos: int) -> int:
+def get_reward(state: int, cliff_pos: np.array) -> int:
     """
     Compute reward for given state
     """
     return -100 if state in cliff_pos else -1
+
 
 def compute_cum_rewards(gamma: float, t: int, rewards: np.array) -> float:
     """Cumulative reward function"""

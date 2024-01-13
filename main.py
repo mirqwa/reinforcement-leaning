@@ -2,7 +2,7 @@ import plot
 from learning_algorithms import sarsa, q_learning, expected_sarsa
 
 
-num_of_episodes = 2000
+num_of_episodes = 5
 gamma = 1
 alpha = 0.1
 epsilon = 0.1

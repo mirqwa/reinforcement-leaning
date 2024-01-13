@@ -31,7 +31,7 @@ def update_q_table(
     alpha,
     first_visit,
 ):
-    for t in range(len(reward_trajectory) - 1, 0, -1):
+    for t in range(len(reward_trajectory) - 1, -1, -1):
         reward = reward_trajectory[t]
         action = action_trajectory[t]
         state = state_trajectory[t]
@@ -56,7 +56,7 @@ def compute_and_store_reward(
     reward_trajectory,
 ):
     # Compute and store reward
-    reward = actions.get_reward(next_state, cliff_pos, goal_pos)
+    reward = actions.get_reward(next_state, cliff_pos)
     rewards_cache[episode] += reward
     state_trajectory.append(state)
     action_trajectory.append(action)
