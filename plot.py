@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 import seaborn as sns
 
 from environment import env_to_text
@@ -40,7 +41,6 @@ def console_output(
     """Print path and key metrics in console"""
     for i in range(len(sim_output.env_cache)):
         env_str = env_to_text(sim_output.env_cache[i])
-
         print("=====", sim_output.name_cache[i], "=====")
         print("Action after {} iterations:".format(num_episodes), "\n")
         print(env_str, "\n")
@@ -54,18 +54,19 @@ def plot_path(
     sim_output,
 ) -> None:
     """Plot latest paths as heatmap"""
-
-    # Set values for cliff
     for i in range(len(sim_output.env_cache)):
+        # Set values for cliff
         for j in range(1, 11):
             sim_output.env_cache[i][3, j] = -1
-
+        colors = ["#FF0000", "#000000", "#00FF00"]
+        cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", colors)
         ax = sns.heatmap(
             sim_output.env_cache[i],
             square=True,
             cbar=True,
             xticklabels=False,
             yticklabels=False,
+            cmap=cmap,
         )
         ax.set_title(sim_output.name_cache[i])
         plt.show()

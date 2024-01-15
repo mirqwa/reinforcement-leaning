@@ -7,9 +7,7 @@ def init_q_table(x_dim: int = 12, y_dim: int = 4) -> np.array:
     Set Q(s, a) = 0, for all s ∈ S, a ∈ A(s)
     """
     # Initialize Q-table (4 actions per state) with zeros
-    q_table = np.zeros((4, x_dim * y_dim))
-
-    return q_table
+    return np.zeros((4, x_dim * y_dim))
 
 
 def update_q_table(

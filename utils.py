@@ -44,8 +44,9 @@ def plot_simulation_results(sim_input, sim_output):
 
 def get_argument_parser():
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("--num_episodes", default=1000, type=int)
+    arg_parser.add_argument("--num_episodes", default=5000, type=int)
     arg_parser.add_argument("--gamma", default=1, type=float)
     arg_parser.add_argument("--alpha", default=0.1, type=float)
     arg_parser.add_argument("--epsilon", default=0.1, type=float)
+    arg_parser.add_argument("--decay", default=False, type=bool)
     return arg_parser
