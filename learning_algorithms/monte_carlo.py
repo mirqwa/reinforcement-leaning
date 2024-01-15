@@ -71,7 +71,7 @@ def update_simulation_output(env, steps_cache, rewards_cache, sim_output):
     sim_output.name_cache.append("Monte Carlo")
 
 
-def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
+def monte_carlo(sim_input, sim_output, first_visit, decay=False) -> (np.array, list):
     """
     Monte Carlo: full-trajectory RL algorithm to train agent
     """
@@ -98,7 +98,8 @@ def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
 
         state = environment.get_state(agent_pos)
         while not game_over:
-            action = actions.epsilon_greedy_action(state, q_table, epsilon)
+            current_epsilon = (100 - steps_cache[episode]) / 100 * epsilon if decay else epsilon
+            action = actions.epsilon_greedy_action(state, q_table, current_epsilon)
             # Move agent to next position
             agent_pos = actions.move_agent(agent_pos, action)
             # updating the environmet after taking the action in the current state
@@ -136,14 +137,14 @@ def monte_carlo(sim_input, sim_output, first_visit) -> (np.array, list):
     return q_table, sim_output
 
 
-def main(num_episodes, gamma, alpha, epsilon, first_visit, plot_simulation=False):
+def main(num_episodes, gamma, alpha, epsilon, first_visit, decay=False, plot_simulation=False):
     sim_input = utils.sim_init(
         num_episodes=num_episodes, gamma=gamma, alpha=alpha, epsilon=epsilon
     )
     sim_output = utils.sim_output(
         rewards_cache=[], step_cache=[], env_cache=[], name_cache=[]
     )
-    q_table_mc, sim_output = monte_carlo(sim_input, sim_output, first_visit)
+    q_table_mc, sim_output = monte_carlo(sim_input, sim_output, first_visit, decay)
     q_table_df = pd.DataFrame(
         columns=["up", "down", "left", "right"], data=q_table_mc.T
     )
@@ -166,5 +167,6 @@ if __name__ == "__main__":
         args.alpha,
         args.epsilon,
         args.first_visit,
+        args.decay,
         plot_simulation=True,
     )
