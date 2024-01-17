@@ -1,8 +1,6 @@
+# Randomwalk environment from https://github.com/kamenbliznashki/sutton_barto/blob/master/ch09_random_walk.py
+# Slightly modified
 import numpy as np
-
-# --------------------
-# MDP
-# --------------------
 
 
 class RandomWalk:
